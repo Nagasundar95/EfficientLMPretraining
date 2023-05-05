@@ -2,8 +2,8 @@
 ## Efficient Pretraining of Language Models
 ### Environment Setup
 #### Run the following in a sequence to set up the environment for running the code. (It is assumed that you have anaconda installed)
->- `conda create --name ingenious python=3.9`
->- `conda activate ingenious`
+>- `conda create --name EfficientLM python=3.9`
+>- `conda activate EfficientLM`
 >- `conda install pytorch torchvision torchaudio cudatoolkit=11.6 -c pytorch -c conda-forge`
 >- `pip3 install git+https://github.com/huggingface/accelerate`
 >- `pip3 install -r requirements.txt`
@@ -23,10 +23,27 @@ An example is given below
 - How many processes in total will you use? [1]: **4**
 - Do you wish to use FP16 (mixed precision)? [yes/NO]: **yes**
 
+## On the Bookcorpus + English Wikipedia dataset
+Prepare the dataset by running python3 utils/prepare_bookcorpus_wiki.py
+
 ### Running the Code
 Change appropriate parameters in `train_BERT.py` and run it. 
 
+Train BERT from scratch for 1,000,000 steps by running python3 train_BERT.py
+
 #### There are different scripts that execute different algorithms
-- `run_language_modeling.py` runs traditional BERT pretraining, exactly similar to the Google's BERT paper
-- `run_lm_with_subsets.py` runs the following algorithm: After every `select_every` steps, embeddings are computed for the full dataset, Using the submodular function mentioned as `selection_strategy`, a new subset is selected and this is used to train the model for next `select_every` steps. This process continues till `max_train_steps` training steps are completed
-- `run_lm_with_subsets_knn.py` runs the following algorithm: An initial warmstart is done on the ground set. Assuming that the embeddings computed are not that bad to compute similarities and hence to measure redundancies, we use the computed embeddings at this point to select a subset using the submodular function mentioned as `selection_strategy`. After every 
+- `BERT\run_mlm_nsp.py` runs traditional BERT pretraining, exactly similar to the Google's BERT paper.
+- `BERT\run_mlm_with_subsets_importance_sampling.py` runs the BERT pre-training on the subsets selected by our approach.
+- `BERT\run_mlm_with_uncertatinty_sampling.py` runs the loss based sampling baseline.
+- `BERT\run_mlm_subsets_fixed_subset.py` runs the the random subset selection baseline.
+
+## On the OpenWebText dataset
+Prepare the dataset by running python3 utils/prepare_gpt2_corpus.py
+
+### Running the Code
+Change appropriate parameters in `train_gpt2.py` and run it. 
+
+
+#### There are different scripts that execute different algorithms
+- `GPT2\run_clm.py` runs traditional GPT-2 pretraining, exactly similar to the OpenAI GPT-2 paper.
+- `GPT2\run_clm_with_subsets_importance_sampling.py` runs the GPT-2 pre-training on the subsets selected by our approach.
